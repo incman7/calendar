@@ -9,7 +9,8 @@ export const COLORS = [
   { name: 'Gray',   bg: '#455a64', light: '#eceff1' },
 ];
 
-export const CATEGORIES = COLORS.map(c => ({ ...c, visible: true }));
+const _savedVis = JSON.parse(localStorage.getItem('cal_category_vis') || '{}');
+export const CATEGORIES = COLORS.map(c => ({ ...c, visible: _savedVis[c.bg] !== false }));
 
 export const DAYS = ['S','M','T','W','T','F','S'];
 export const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];

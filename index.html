@@ -6,6 +6,7 @@
 <title>My Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,6 +21,10 @@
     <button class="btn" id="prevBtn">&#8592;</button>
     <button class="btn" id="nextBtn">&#8594;</button>
     <button class="btn-primary btn" id="addEventBtn">+ New event</button>
+    <div class="user-badge" id="userBadge">
+      <span class="user-email" id="userEmail"></span>
+      <button class="btn btn-ghost" id="signOutBtn" title="Sign out">&#x2715;</button>
+    </div>
   </div>
 </header>
 
@@ -110,6 +115,28 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Auth overlay (shown when Supabase is configured and user is not signed in) -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-dot"></div>
+      My Calendar
+    </div>
+    <h2 class="auth-heading">Sign in</h2>
+    <p class="auth-sub">Enter your email and we'll send you a magic link — no password needed.</p>
+    <div class="auth-form">
+      <input class="form-input" type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
+      <button class="btn btn-primary auth-btn" id="authSendBtn">Send magic link</button>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
 <script type="module" src="js/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
 </body>
 </html>

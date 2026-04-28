@@ -49,8 +49,12 @@ export function updateTitle() {
 }
 
 export function initCalendar() {
+  const savedView = localStorage.getItem('cal_view') || 'timeGridWeek';
+  const savedDate = localStorage.getItem('cal_date') || null;
+
   calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-    initialView: 'timeGridWeek',
+    initialView: savedView,
+    initialDate: savedDate || undefined,
     headerToolbar: false,
     height: 'auto',
     editable: true,
@@ -92,7 +96,16 @@ export function initCalendar() {
       showToast('Event resized');
     },
 
-    datesSet: updateTitle,
+    datesSet: () => {
+      updateTitle();
+      const view = calendar.view.type;
+      const date = calendar.getDate().toISOString();
+      localStorage.setItem('cal_view', view);
+      localStorage.setItem('cal_date', date);
+      document.querySelectorAll('.view-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.view === view);
+      });
+    },
   });
 
   calendar.render();
