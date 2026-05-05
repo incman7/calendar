@@ -40,19 +40,13 @@ self.addEventListener('activate', event => {
 });
 
 // Fetch strategy:
-// - Supabase API calls → network-first (skip cache, return empty on failure)
-// - Everything else  → cache-first, falling back to network
+// - Supabase API calls → bypass service worker entirely
+// - Everything else  → cache-first, falling back to network, then cache on success
 self.addEventListener('fetch', event => {
   const url = event.request.url;
 
-  if (url.includes('supabase.co')) {
-    event.respondWith(
-      fetch(event.request).catch(() =>
-        new Response(JSON.stringify([]), {
-          headers: { 'Content-Type': 'application/json' },
-        })
-      )
-    );
+  // Let Supabase and non-GET requests go straight to the network untouched
+  if (url.includes('supabase.co') || event.request.method !== 'GET') {
     return;
   }
 
@@ -61,9 +55,8 @@ self.addEventListener('fetch', event => {
       if (cached) return cached;
       return fetch(event.request).then(response => {
         if (response.ok) {
-          caches.open(CACHE).then(cache =>
-            cache.put(event.request, response.clone())
-          );
+          const clone = response.clone();
+          caches.open(CACHE).then(cache => cache.put(event.request, clone));
         }
         return response;
       });
